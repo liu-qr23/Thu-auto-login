@@ -6,13 +6,14 @@
 // @match        https://id.tsinghua.edu.cn/do/off/ui/auth/login/*
 // @match        https://learn.tsinghua.edu.cn/f/wlxt/index/course/student/
 // @match        https://learn.tsinghua.edu.cn/f/login
+// @match        https://zhjwxk.cic.tsinghua.edu.cn/id_xsxk_error.jsp?login_error=timeError
 // @grant        none
 // ==/UserScript==
 
 (function () {
     // 请把下面的值替换为你自己的账号/密码。
     var ACCOUNTS = [
-        { user: '2023012345', pass: '12345678' }
+        { user: '12345678', pass: '12345678' }
     ];
 
     // 网络学堂自动点击
@@ -34,6 +35,18 @@
     var jumpLink = document.querySelector('a[href]:not([href*="forget"]):not([href*="register"]):not([href="#"])');
     if (jumpLink && jumpLink.getAttribute('href') && jumpLink.getAttribute('href').startsWith('http')) {
         jumpLink.click();
+        return;
+    }
+
+    // 自动点击选课登录入口
+    var xkLink = Array.from(document.querySelectorAll('a[href]')).find(function (a) {
+        var h = a.getAttribute('href') || '';
+        var t = (a.textContent || '').trim();
+        console.log('检查链接:', h, '文本:', t);
+        return h === '/xklogin.do' || h.endsWith('/xklogin.do') || t.indexOf('点此跳转选课登录入口') !== -1;
+    });
+    if (xkLink) {
+        xkLink.click();
         return;
     }
 
